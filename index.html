@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo do Dinossauro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <div id="dinosaur"></div>
+        <div id="ground"></div>
+        <div id="cactus"></div>
+    </div>
+    
+    <script>
+        const dinosaur = document.getElementById("dinosaur");
+        const cactus = document.getElementById("cactus");
+
+        let isJumping = false;
+        let isGameOver = false;
+
+        // Função para fazer o dinossauro pular
+        function jump() {
+            if (isJumping) return;
+
+            isJumping = true;
+            dinosaur.classList.add("jump");
+
+            setTimeout(() => {
+                dinosaur.classList.remove("jump");
+                isJumping = false;
+            }, 500);
+        }
+
+        // Detectar pressionamento da tecla de espaço
+        document.addEventListener("keydown", (event) => {
+            if (event.key === " " && !isGameOver) {
+                jump();
+            }
+        });
+
+        // Verificar colisões
+        function checkCollision() {
+            const cactusRect = cactus.getBoundingClientRect();
+            const dinoRect = dinosaur.getBoundingClientRect();
+
+            if (!isGameOver && !isJumping && cactusRect.left < dinoRect.right && cactusRect.top > dinoRect.bottom) {
+                gameOver();
+            }
+        }
+
+        // Função de final de jogo
+        function gameOver() {
+            isGameOver = true;
+            alert("Game Over!");
+        }
+
+        // Movimento do cacto
+        function moveCactus() {
+            const cactusPosition = parseInt(window.getComputedStyle(cactus).getPropertyValue("left"));
+
+            if (cactusPosition < -50) {
+                cactus.style.left = "100%";
+            }
+
+            cactus.style.left = cactusPosition - 5 + "px";
+
+            checkCollision();
+        }
+
+        // Atualizações do jogo
+        function gameLoop() {
+            moveCactus();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Iniciar o loop do jogo
+        gameLoop();
+    </script>
+</body>
+</html>
